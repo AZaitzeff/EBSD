@@ -44,17 +44,17 @@ uin = RSreinit2D(1000,1/(5*500),u0);
 %[u] = phiupdatesc(100,1/(5*100^2),uin,testf,100,sigma,rows,cols)
 %[u] = phiupdate(100,1/(5*10^2),u0,Gfb,20,g1,g2,sigma,1);
 Gfb=ebsdfilter(testf,rows,cols,sigma,0);
-[u] = phiupdatesc(50,1/(5*100^2),uin,Gfb,10000,sigma,rows,cols);
+[u] = phiupdatesc(20,1/(5*100^2),uin,Gfb,1000000,sigma,rows,cols);
 save('u1.mat', 'u', '-v7.3');
-[u] = phiupdatesc(50,1/(5*100^2),u,Gfb,10000,sigma,rows,cols);
+[u] = phiupdatesc(20,1/(5*100^2),u,Gfb,1000000,sigma,rows,cols);
 save('u2.mat', 'u', '-v7.3');
-[u] = phiupdatesc(50,1/(5*100^2),u,Gfb,10000,sigma,rows,cols);
+[u] = phiupdatesc(20,1/(5*100^2),u,Gfb,1000000,sigma,rows,cols);
 save('u3.mat', 'u', '-v7.3');
-[u] = phiupdatesc(50,1/(5*100^2),u,Gfb,10000,sigma,rows,cols);
+[u] = phiupdatesc(20,1/(5*100^2),u,Gfb,1000000,sigma,rows,cols);
 save('u4.mat', 'u', '-v7.3');
-[u] = phiupdatesc(50,1/(5*100^2),u,Gfb,10000,sigma,rows,cols);
+[u] = phiupdatesc(20,1/(5*100^2),u,Gfb,1000000,sigma,rows,cols);
 save('u5.mat', 'u', '-v7.3');
-[u] = phiupdatesc(50,1/(5*100^2),u,Gfb,10000,sigma,rows,cols);
+[u] = phiupdatesc(20,1/(5*100^2),u,Gfb,10000,sigma,rows,cols);
 save('u6.mat', 'u', '-v7.3');
 
 % Look at the result:
@@ -66,7 +66,7 @@ save('u6.mat', 'u', '-v7.3');
 % Run some more:
 %[u] = phiupdate(10,1/(5*20^2),u,testf,100,g1,g2,noise,sigma);
 
-save('Dict_woprj_new333226nobg.mat', 'dict_woprj', '-v7.3');
+%save('Dict_woprj_new333226nobg.mat', 'dict_woprj', '-v7.3');
 % Look at the result:
 %imagesc(f)
 %colormap gray(256)
