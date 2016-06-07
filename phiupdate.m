@@ -73,7 +73,7 @@ for t = 1:nt % Main time loop
     X = zeros(size(uin));
     %H(u,.01),m,n,radius,1,0)
     GGH=ebsdfilter(ebsdfilter(H(u(3:m+2,3:n+2),esp),rows,cols,radius,1),rows,cols,radius,0);
-    GGH2=ebsdfilter(ebsdfilter(H(1-u(3:m+2,3:n+2),esp),rows,cols,radius,1),rows,cols,radius,0);
+    GGH2=ebsdfilter(ebsdfilter(H(-u(3:m+2,3:n+2),esp),rows,cols,radius,1),rows,cols,radius,0);
     for i = 1:m,
         for j = 1:n,
             X(i,j)=L2inner(g1-g2,g1*GGH(i,j)+g2*(GGH2(i,j))-reshape(Gfb(i,j,:),[1,4800]),me);
@@ -113,9 +113,6 @@ for n=1:80,
 end
 value=real(thecumsum);
 
-function [newvec]=vecf(val,g1,g2,noise)
-
-newvec=val*g1+g2*(1-val)+noise;
 
 function [ubo]=upbuffer2(ub)
 

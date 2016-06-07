@@ -6,7 +6,7 @@ rows=10:20:400;
 cols=10:20:400;
 testf=ebsdfilter(f,rows,cols,sigma,1);
 
-dict = matfile('smalldictnobg.mat');
+dict = load('smalldictnobg.mat');
 g1=dict.vec(1,:);
 g2=dict.vec(10,:);
 %create f
@@ -16,6 +16,8 @@ for i=rows,
        newf(i,j,:)=g1*testf(i,j)+g2*(1-testf(i,j))+normrnd(1,10,[1,4800]);
     end
 end
+clear testf dict;
+
 % Look at it:
 %imagesc(f)
 %colormap gray
@@ -31,6 +33,8 @@ u0(125:275,125:275)=1;
 %    end
 %end
 uin = RSreinit2D(1000,1/(5*500),u0);
+
+clear u0;
 %noise=zeros([20,20,1,4800]);
 % Look at it on the image:
 %imagesc(f)
