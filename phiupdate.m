@@ -1,4 +1,4 @@
-function [uo] = phiupdate(nt,dt,uin,f,fid,g1,g2,radius,cal,rows,cols)
+function [uo] = phiupdate(nt,dt,uin,f,fid,g1,g2,radius)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -37,20 +37,25 @@ function [uo] = phiupdate(nt,dt,uin,f,fid,g1,g2,radius,cal,rows,cols)
 
 
 [m,n] = size(uin); %size of level set function
-
-
-
-u = buffer2(uin);   % Size is now (m+4)x(n+4). nice works around the boundaries
-if cal==1
-    [mb,nb,~]=size(f);
-    Gfb=ebsdfilterf(superres(f,m,n),mb,nb,radius,1,0);
-else
-    Gfb=f;
-end
-
-
+[ms,ns,~] = size(f);
+factor=m/ms;
 me = 0.01;  % Regularization of denominators.
 esp=.1;
+
+u = buffer2(uin);   % Size is now (m+4)x(n+4). nice works around the boundaries
+innerg1g2f=zeros(ms,ns);
+g1g2=g1-g2;
+
+for i = 1:ms,
+    for j = 1:ns,
+        innerg1g2f(i,j)=L2inner(g1g2,reshape(f(i,j,:),[1,4800]),me);
+    end
+end 
+bigg1g2f=ebsdfilter(innerg1g2f,m,n,radius,factor);
+g1g2g1=L2inner(g1g2,g1,me);
+g1g2g2=L2inner(g1g2,g2,me);
+
+
 
 
 for t = 1:nt % Main time loop
@@ -70,16 +75,12 @@ for t = 1:nt % Main time loop
     Du = sqrt( u_x.^2 + u_y.^2 + me );
     
    
-    X = zeros(size(uin));
     %H(u,.01),m,n,radius,1,0)
-    GGH=ebsdfilter(ebsdfilter(H(u(3:m+2,3:n+2),esp),rows,cols,radius,1),rows,cols,radius,0);
-    GGH2=ebsdfilter(ebsdfilter(H(-u(3:m+2,3:n+2),esp),rows,cols,radius,1),rows,cols,radius,0);
-    for i = 1:m,
-        for j = 1:n,
-            X(i,j)=L2inner(g1-g2,g1*GGH(i,j)+g2*(GGH2(i,j))-reshape(Gfb(i,j,:),[1,4800]),me);
-            %X(i,j)=H1inner(g1-g2,g1*GGH(i,j)+g2*(GGH2(i,j))-vecf(Gfb(i,j),g1,g2,noise(i,j)),me);
-        end
-    end
+    GGH=ebsdfilter(subres(H(u(3:m+2,3:n+2),esp),ms,ns,radius),m,n,radius,factor);
+    %GGH2=ebsdfilter(subres(1-H(u(3:m+2,3:n+2),esp),ms,ns,radius),m,n,radius,factor);
+
+    X=GGH*g1g2g1+(1-GGH)*g1g2g2-bigg1g2f;
+    %X(i,j)=H1inner(g1-g2,g1*GGH(i,j)+g2*(GGH2(i,j))-vecf(Gfb(i,j),g1,g2,noise(i,j)),me);
     
     Xb=buffer2(X);
     rhs = backwardx(u_x./Du)*m + backwardy(u_y./Du)*n- fid*(Xb);
@@ -113,6 +114,9 @@ for n=1:80,
 end
 value=real(thecumsum);
 
+function [newvec]=vecf(val,g1,g2,noise)
+
+newvec=val*g1+g2*(1-val)+noise;
 
 function [ubo]=upbuffer2(ub)
 
