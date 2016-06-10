@@ -40,7 +40,7 @@ function [uo] = phiupdate(nt,dt,uin,f,fid,g1,g2,radius)
 [ms,ns,~] = size(f);
 factor=m/ms;
 me = 0.01;  % Regularization of denominators.
-esp=.1;
+esp=.01;
 
 u = buffer2(uin);   % Size is now (m+4)x(n+4). nice works around the boundaries
 innerg1g2f=zeros(ms,ns);
@@ -48,12 +48,12 @@ g1g2=g1-g2;
 
 for i = 1:ms,
     for j = 1:ns,
-        innerg1g2f(i,j)=L2inner(g1g2,reshape(f(i,j,:),[1,4800]),me);
+        innerg1g2f(i,j)=dot(g1g2,reshape(f(i,j,:),[1,4800]));
     end
 end 
-bigg1g2f=ebsdfilter(innerg1g2f,m,n,radius,factor);
-g1g2g1=L2inner(g1g2,g1,me);
-g1g2g2=L2inner(g1g2,g2,me);
+bigg1g2f=ebsdfilter(innerg1g2f,m,n,radius,factor,me);
+g1g2g1=dot(g1g2,g1);
+g1g2g2=dot(g1g2,g2);
 
 
 
@@ -76,7 +76,7 @@ for t = 1:nt % Main time loop
     
    
     %H(u,.01),m,n,radius,1,0)
-    GGH=ebsdfilter(subres(H(u(3:m+2,3:n+2),esp),ms,ns,radius),m,n,radius,factor);
+    GGH=ebsdfilter(subres(H(u(3:m+2,3:n+2),esp),ms,ns,radius),m,n,radius,factor,me);
     %GGH2=ebsdfilter(subres(1-H(u(3:m+2,3:n+2),esp),ms,ns,radius),m,n,radius,factor);
 
     X=GGH*g1g2g1+(1-GGH)*g1g2g2-bigg1g2f;
