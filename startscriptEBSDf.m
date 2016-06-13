@@ -32,7 +32,7 @@ u0(125:275,125:275)=1;
 %        end
 %    end
 %end
-uin = RSreinit2D(1000,1/(5*500),u0);
+%uin = RSreinit2D(1000,1/(5*500),u0);
 
 clear u0;
 %noise=zeros([20,20,1,4800]);
@@ -45,12 +45,14 @@ clear u0;
 % Run the program with that initial condition:
 %[u] = phiupdatesc(100,1/(5*100^2),uin,testf,100,sigma,rows,cols)
 %[u] = phiupdate(100,1/(5*10^2),u0,Gfb,20,g1,g2,sigma,1);
-[u] = phiupdate(2000,1/(5*100^2),uin,newf,5,g1,g2,sigma);
-save('u1.mat', 'u', '-v7.3');
-[u] = phiupdate(2000,1/(5*100^2),uin,newf,1,g1,g2,sigma);
-save('u2.mat', 'u', '-v7.3');
-[u] = phiupdate(2000,1/(5*100^2),uin,newf,10,g1,g2,sigma);
-save('u3.mat', 'u', '-v7.3');
+%[u] = phiupdate(2000,1/(5*100^2),uin,newf,5,g1,g2,sigma);
+%save('u1.mat', 'u', '-v7.3');
+%[u] = phiupdate(2000,1/(5*100^2),uin,newf,1,g1,g2,sigma);
+%save('u2.mat', 'u', '-v7.3');
+u3=load('u3.mat');
+u3=u3.u;
+[u] = phiupdate(8000,1/(5*100^2),u3,newf,10,g1,g2,sigma);
+save('u32.mat', 'u', '-v7.3');
 %[u] = phiupdate(200,1/(5*100^2),u,newf,100,g1,g2,sigma);
 %save('u2.mat', 'u', '-v7.3');
 %[u] = phiupdate(200,1/(5*100^2),u,newf,100,g1,g2,sigma);
